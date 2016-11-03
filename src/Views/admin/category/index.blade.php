@@ -5,6 +5,7 @@
 @stop
 
 @section('content')
+<div class="wrapper margin-top">
     @include('ticketit::shared.header')
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -71,6 +72,7 @@
             </table>
         @endif
     </div>
+</div>
 @stop
 @section('footer')
     <script>

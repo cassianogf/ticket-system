@@ -4,17 +4,17 @@ Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddle
 
     //Route::group(['middleware' => '', function () use ($main_route) {
         //Ticket public route
-        Route::get("$main_route_path/complete", 'Kordy\Ticketit\Controllers\TicketsController@indexComplete')
-            ->name("$main_route-complete");
     Route::get("$main_route_path/data/{id?}", 'Kordy\Ticketit\Controllers\TicketsController@data')
             ->name("$main_route.data");
 
+    Route::get('tickets/lobby', 'Kordy\Ticketit\Controllers\TicketsController@lobby')
+        ->name('tickets.lobby');
+        
     $field_name = last(explode('/', $main_route_path));
     Route::resource($main_route_path, 'Kordy\Ticketit\Controllers\TicketsController', [
             'names' => [
                 'index'   => $main_route.'.index',
                 'store'   => $main_route.'.store',
-                'create'  => $main_route.'.create',
                 'update'  => $main_route.'.update',
                 'show'    => $main_route.'.show',
                 'destroy' => $main_route.'.destroy',
@@ -24,6 +24,22 @@ Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddle
                 $field_name => 'ticket',
             ],
         ]);
+
+    Route::get("/tickets/create/{id?}", 'Kordy\Ticketit\Controllers\TicketsController@create')
+        ->name("/tickets/create/id");
+
+    Route::get("/tickets/quickshow/{id}", 'Kordy\Ticketit\Controllers\TicketsController@quickShow')
+        ->name("/tickets/quickshow/id");
+
+    Route::post("tickets/rate", 'Kordy\Ticketit\Controllers\TicketsController@rate')
+        ->name("tickets.rate");
+
+    Route::post("tickets/get/users", 'Kordy\Ticketit\Controllers\TicketsController@getUsersFromCompany')
+        ->name("tickets.get.users");
+
+    Route::post('tickets/blink', 'Kordy\Ticketit\Controllers\TicketsController@blink')
+        ->name('tickets.blink');
+
 
         //Ticket Comments public route
         $field_name = last(explode('/', "$main_route_path-comment"));
@@ -146,7 +162,6 @@ Route::group(['middleware' => \Kordy\Ticketit\Helpers\LaravelVersion::authMiddle
             ],
         ]);
 
-        //Tickets demo data route (ex. http://url/tickets-admin/demo-seeds/)
-        // Route::get("$admin_route/demo-seeds", 'Kordy\Ticketit\Controllers\InstallController@demoDataSeeder');
+
     });
 });

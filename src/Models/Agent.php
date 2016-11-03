@@ -3,6 +3,8 @@
 namespace Kordy\Ticketit\Models;
 
 use App\User;
+use App\Http\Models\Company;
+use Illuminate\Support\Facades\Log;
 use Auth;
 
 class Agent extends User
@@ -77,11 +79,7 @@ class Agent extends User
      */
     public function scopeAgentsLists($query)
     {
-        if (version_compare(app()->version(), '5.2.0', '>=')) {
-            return $query->where('ticketit_agent', '1')->pluck('name', 'id')->toArray();
-        } else { // if Laravel 5.1
-            return $query->where('ticketit_agent', '1')->lists('name', 'id')->toArray();
-        }
+        return $query->where('ticketit_agent', '1')->lists('name', 'id')->toArray();
     }
 
     /**
@@ -132,7 +130,7 @@ class Agent extends User
     public static function isAssignedAgent($id)
     {
         if (auth()->check() && Auth::user()->ticketit_agent) {
-            if (Auth::user()->id == Ticket::find($id)->agent->id) {
+            if (Ticket::find($id)->agent_id == 0 || Auth::user()->id == Ticket::find($id)->agent->id) {
                 return true;
             }
         }
@@ -155,6 +153,26 @@ class Agent extends User
     }
 
     /**
+     * Check if the user is on the conversation for a ticket.
+     *
+     * @param int $id ticket id
+     *
+     * @return bool
+     */
+    public static function isOnConversationList($id)
+    {
+        if (auth()->check()) {
+            $conversation = Ticket::where('id', $id)->first(['conversation_id_list']);
+            $conversation_list = explode(',', $conversation->conversation_id_list);
+
+            foreach ($conversation_list as $user) {
+                if(auth()->user()->id == $user)
+                    return true;
+            }
+        }
+    }
+
+    /**
      * Get related categories.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -163,7 +181,7 @@ class Agent extends User
     {
         return $this->belongsToMany('Kordy\Ticketit\Models\Category', 'ticketit_categories_users', 'user_id', 'category_id');
     }
-
+    
     /**
      * Get related agent tickets (To be deprecated).
      */

@@ -2,12 +2,18 @@
 
 namespace Kordy\Ticketit\Controllers;
 
+use App\Helpers\BlinkHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Kordy\Ticketit\Models;
+use Kordy\Ticketit\Models\Agent;
+use Kordy\Ticketit\Requests\PrepareCommentStoreRequest;
+use App\Http\Models\Notification;
 
 class CommentsController extends Controller
 {
+
+
     public function __construct()
     {
         $this->middleware('Kordy\Ticketit\Middleware\IsAdminMiddleware', ['only' => ['edit', 'update', 'destroy']]);
@@ -37,17 +43,13 @@ class CommentsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param PrepareCommentStoreRequest $request
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return Response
      */
-    public function store(Request $request)
+    public function store(PrepareCommentStoreRequest $request)
     {
-        $this->validate($request, [
-            'ticket_id'   => 'required|exists:ticketit,id',
-            'content'     => 'required|min:6',
-        ]);
-
+        $user = Agent::find(auth()->user()->id);
         $comment = new Models\Comment();
 
         $comment->setPurifiedContent($request->get('content'));
@@ -57,8 +59,32 @@ class CommentsController extends Controller
         $comment->save();
 
         $ticket = Models\Ticket::find($comment->ticket_id);
+
+        if($user->isAgent() || $user->isAdmin()) {
+            $ticket->status_id = 4;
+            $ticket->agent_id = $user->id;
+
+            $notification = new Notification();
+            $notification->user_id = $ticket->user_id;
+            $notification->content = "<b>" . \Auth::user()->name . "</b> respondeu o chamado #" . $ticket->subject . ".";
+            $notification->action = "tickets/" . $ticket->id . "#" . $comment->id;
+            $notification->status = 1;
+            $notification->image = "user/" . \Auth::user()->avatar;
+            $notification->save();
+        } else {
+            $notification = new Notification();
+            $notification->user_id = $ticket->agent_id;
+            $notification->content = "<b>" . \Auth::user()->name . "</b> respondeu o chamado #" . $ticket->subject . ".";
+            $notification->action = "tickets/" . $ticket->id . "#" . $comment->id;
+            $notification->status = 1;
+            $notification->image = "user/" . \Auth::user()->avatar;
+            $notification->save();
+        }
         $ticket->updated_at = $comment->created_at;
         $ticket->save();
+
+        BlinkHelper::pushBlink($ticket->user_id, 'tickets');
+
 
         return back()->with('status', trans('ticketit::lang.comment-has-been-added-ok'));
     }

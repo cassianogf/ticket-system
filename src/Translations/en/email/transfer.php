@@ -1,7 +1,5 @@
 <?php
 
 return [
-
-'data' => '<b>:name</b> has transferred the ticket "<b>:subject</b>" from :agent in :old_category to you in :new_category<br>',
-
+    'data' => '<b>:name</b> foi transferido de chamado "<b>:subject</b>" para :agent na :old_category para você na :new_category<br>',
 ];

@@ -3,6 +3,7 @@
 namespace Kordy\Ticketit\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Nicolaslopezj\Searchable\SearchableTrait;
 use Jenssegers\Date\Date;
 use Kordy\Ticketit\Traits\ContentEllipse;
 use Kordy\Ticketit\Traits\Purifiable;
@@ -11,6 +12,14 @@ class Ticket extends Model
 {
     use ContentEllipse;
     use Purifiable;
+    use SearchableTrait;
+
+    protected $searchable = [
+        'columns' => [
+            'ticketit.subject' => 20,
+            'ticketit.content' => 10,
+        ],
+    ];
 
     protected $table = 'ticketit';
     protected $dates = ['completed_at'];
@@ -47,7 +56,7 @@ class Ticket extends Model
      */
     public function scopeActive($query)
     {
-        return $query->whereNull('completed_at');
+        return $query;
     }
 
     /**
@@ -81,6 +90,16 @@ class Ticket extends Model
     }
 
     /**
+     * Get Ticket sub-category.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function subcategory()
+    {
+        return $this->hasOne('App\Http\Models\Category', 'category_id', 'sub_category_id');
+    }
+
+    /**
      * Get Ticket owner.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -88,6 +107,16 @@ class Ticket extends Model
     public function user()
     {
         return $this->belongsTo('App\User', 'user_id');
+    }
+
+    /**
+     * Get Ticket owner.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function company()
+    {
+        return $this->belongsTo('App\Http\Models\Company', 'company_id');
     }
 
     /**
@@ -108,6 +137,10 @@ class Ticket extends Model
     public function comments()
     {
         return $this->hasMany('Kordy\Ticketit\Models\Comment', 'ticket_id');
+    }
+
+    public function rate() {
+        return $this->belongsTo('App\Http\Models\Rate');
     }
 
 //    /**
@@ -189,6 +222,69 @@ class Ticket extends Model
     }
 
     /**
+     * Retorna a data nessa pattern:
+     *
+     * Time < 60 segundos = <value> segundo(s).
+     * Time < 60 minutos = <value> minuto(s).
+     * Time < 24 horas = <value> hora(s).
+     * Time > 24 horas = <value> dia(s).
+     *
+     * @return string
+    */
+    public function getScalarDate() {
+        $result = $this->updated_at;
+
+		$delta_time = time() - strtotime($result);
+        $days = floor($delta_time / 86400);
+		$delta_time %= 86400;
+		$hours = floor($delta_time / 3600);
+		$delta_time %= 3600;
+		$minutes = floor($delta_time / 60);
+		$delta_time %= 3600;
+		$seconds = floor($delta_time);
+		if($days == 0) {
+			if($hours == 0) {
+				if($minutes == 0) {
+					return $seconds . " segundo(s)";
+				}
+				return $minutes . " minuto(s)";
+			}
+			return $hours . " hora(s)";
+		}
+		return $days . " dia(s)";
+    }
+
+    public function getCreatedScalarDate() {
+        $result = $this->created_at;
+
+        $delta_time = time() - strtotime($result);
+        $days = floor($delta_time / 86400);
+        $delta_time %= 86400;
+        $hours = floor($delta_time / 3600);
+        $delta_time %= 3600;
+        $minutes = floor($delta_time / 60);
+        $delta_time %= 3600;
+        $seconds = floor($delta_time);
+        if($days == 0) {
+            if($hours == 0) {
+                if($minutes == 0) {
+                    return $seconds . " segundo(s)";
+                }
+                return $minutes . " minuto(s)";
+            }
+            return $hours . " hora(s)";
+        }
+        return $days . " dia(s)";
+    }
+
+    public function getCreatedAt() {
+        $date = $this->created_at;
+        return $date = date("d/m/y");
+    }
+
+
+
+    /**
      * Sets the agent with the lowest tickets assigned in specific category.
      *
      * @return Ticket
@@ -220,5 +316,19 @@ class Ticket extends Model
         $this->agent_id = $selected_agent_id;
 
         return $this;
+    }
+
+
+    public function countAttachment($ticket) {
+        if($ticket->files != null) {
+            $i=0;
+            $attachments = explode(',',$ticket->attachments);
+            foreach($attachments as $attachment) {
+                $i++;
+            }
+            return $i;
+        } else {
+            return 0;
+        }
     }
 }

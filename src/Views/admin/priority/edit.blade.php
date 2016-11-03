@@ -2,6 +2,7 @@
 @section('page', trans('ticketit::admin.priority-edit-title', ['name' => ucwords($priority->name)]))
 
 @section('content')
+<div class="wrapper margin-top">
     @include('ticketit::shared.header')
     <div class="well bs-component">
         {!! CollectiveForm::model($priority, [
@@ -13,4 +14,5 @@
         @include('ticketit::admin.priority.form', ['update', true])
         {!! CollectiveForm::close() !!}
     </div>
+</div>
 @stop

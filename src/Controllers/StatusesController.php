@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Kordy\Ticketit\Models\Status;
+use Kordy\Ticketit\Requests\PrepareStatusRequest;
 
 class StatusesController extends Controller
 {
@@ -36,15 +37,10 @@ class StatusesController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return Response
      */
-    public function store(Request $request)
+    public function store(PrepareStatusRequest $request)
     {
-        $this->validate($request, [
-            'name'      => 'required',
-            'color'     => 'required',
-        ]);
-
         $status = new Status();
         $status->create(['name' => $request->name, 'color' => $request->color]);
 
@@ -85,15 +81,10 @@ class StatusesController extends Controller
      * @param Request $request
      * @param int     $id
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(PrepareStatusRequest $request, $id)
     {
-        $this->validate($request, [
-            'name'      => 'required',
-            'color'     => 'required',
-        ]);
-
         $status = Status::findOrFail($id);
         $status->update(['name' => $request->name, 'color' => $request->color]);
 

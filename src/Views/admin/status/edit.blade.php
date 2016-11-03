@@ -2,6 +2,7 @@
 @section('page', trans('ticketit::admin.status-edit-title', ['name' => ucwords($status->name)]))
 
 @section('content')
+<div class="wrapper margin-top">
     @include('ticketit::shared.header')
     <div class="well bs-component">
         {!! CollectiveForm::model($status, [
@@ -13,4 +14,5 @@
         @include('ticketit::admin.status.form', ['update', true])
         {!! CollectiveForm::close() !!}
     </div>
+</div>
 @stop

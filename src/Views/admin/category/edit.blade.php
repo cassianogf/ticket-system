@@ -2,6 +2,7 @@
 @section('page', trans('ticketit::admin.category-edit-title', ['name' => ucwords($category->name)]))
 
 @section('content')
+<div class="wrapper margin-top">
     @include('ticketit::shared.header')
     <div class="well bs-component">
         {!! CollectiveForm::model($category, [
@@ -13,4 +14,5 @@
         @include('ticketit::admin.category.form', ['update', true])
         {!! CollectiveForm::close() !!}
     </div>
+</div>
 @stop

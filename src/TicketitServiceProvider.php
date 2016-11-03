@@ -3,6 +3,7 @@
 namespace Kordy\Ticketit;
 
 use Collective\Html\FormFacade as CollectiveForm;
+use App\Http\Models\Company;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
@@ -38,7 +39,9 @@ class TicketitServiceProvider extends ServiceProvider
             view()->composer('*', function ($view) {
                 if (auth()->check()) {
                     $u = Agent::find(auth()->user()->id);
-                    $view->with('u', $u);
+                    $user_company = Company::where('id', $u->company)->first();
+                    $view->with('u', $u)
+                         ->with('user_company', $user_company);
                 }
                 $setting = new Setting();
                 $view->with('setting', $setting);
@@ -188,7 +191,7 @@ class TicketitServiceProvider extends ServiceProvider
             $main_route_path = Setting::grab('main_route_path');
             $admin_route = Setting::grab('admin_route');
             $admin_route_path = Setting::grab('admin_route_path');
-            include Setting::grab('routes');
+            include __DIR__.'/routes.php';
         } elseif (Request::path() == 'tickets-install'
                 || Request::path() == 'tickets-upgrade'
                 || Request::path() == 'tickets'

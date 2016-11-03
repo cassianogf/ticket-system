@@ -32,4 +32,20 @@ class Comment extends Model
     {
         return $this->belongsTo('App\User', 'user_id');
     }
+
+    /**
+     * Token to Close/Open comments in Timeline
+     * WARNING: Do not change this!
+     * If you do: Find and change all comments where content
+     * equals a 256-bit WEP Key to the new Key
+     */
+    public function getOpenToken() {
+        $open_token = "436934F5421A32188766E61B9F91B";
+        return $open_token;
+    }
+
+    public function getCloseToken() {
+        $close_token = "82B2E51DBDBDDBE288E743511C191";
+        return $close_token;
+    }
 }

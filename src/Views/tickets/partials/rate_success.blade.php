@@ -1,0 +1,1 @@
+<h5>Você avaliou nosso atendimento como '{{ $rate_name }}'</h5>

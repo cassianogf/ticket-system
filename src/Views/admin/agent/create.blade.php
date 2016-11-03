@@ -2,6 +2,7 @@
 @section('page', trans('ticketit::admin.agent-create-title'))
 
 @section('content')
+<div class="wrapper margin-top">
     @include('ticketit::shared.header')
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -39,5 +40,6 @@
             {!! CollectiveForm::close() !!}
         @endif
     </div>
+</div>
     {!! $users->render() !!}
 @stop

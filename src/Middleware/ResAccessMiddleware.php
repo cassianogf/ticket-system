@@ -55,6 +55,11 @@ class ResAccessMiddleware
             return $next($request);
         }
 
+        // Ticket Owner has access
+        if (Agent::isOnConversationList($ticket_id)) {
+            return $next($request);
+        }
+
         return redirect()->action('\Kordy\Ticketit\Controllers\TicketsController@index')
             ->with('warning', trans('ticketit::lang.you-are-not-permitted-to-access'));
     }

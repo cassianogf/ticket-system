@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Kordy\Ticketit\Models\Priority;
+use Kordy\Ticketit\Requests\PreparePriorityRequest;
 
 class PrioritiesController extends Controller
 {
@@ -36,15 +37,10 @@ class PrioritiesController extends Controller
      *
      * @param Request $request
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return Response
      */
-    public function store(Request $request)
+    public function store(PreparePriorityRequest $request)
     {
-        $this->validate($request, [
-            'name'      => 'required',
-            'color'     => 'required',
-        ]);
-
         $priority = new Priority();
         $priority->create(['name' => $request->name, 'color' => $request->color]);
 
@@ -85,15 +81,10 @@ class PrioritiesController extends Controller
      * @param Request $request
      * @param int     $id
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(PreparePriorityRequest $request, $id)
     {
-        $this->validate($request, [
-            'name'      => 'required',
-            'color'     => 'required',
-        ]);
-
         $priority = Priority::findOrFail($id);
         $priority->update(['name' => $request->name, 'color' => $request->color]);
 

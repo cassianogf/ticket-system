@@ -7,56 +7,136 @@
 @section('content')
     @include('ticketit::shared.header')
     @if($tickets_count)
+    <div class="wrapper no-color w-1400 margin-top">
         <div class="row">
             <div class="col-lg-3 col-md-4 col-lg-offset-1">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <div class="row">
-                            <div class="col-xs-3" style="font-size: 5em;">
-                                <i class="glyphicon glyphicon-th"></i>
-                            </div>
-                            <div class="col-xs-9 text-right">
-                                <h1>{{ $tickets_count }}</h1>
-                                <div>{{ trans('ticketit::admin.index-total-tickets') }}</div>
+                <a href="{{ url('tickets')}}">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3" style="font-size: 5em;">
+                                    <i class="glyphicon glyphicon-th"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <h1>{{ $tickets_count }}</h1>
+                                    <div>{{ trans('ticketit::admin.index-total-tickets') }}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
-            <div class="col-lg-3 col-md-4">
-                <div class="panel panel-danger">
-                    <div class="panel-heading">
-                        <div class="row">
-                            <div class="col-xs-3" style="font-size: 5em;">
-                                <i class="glyphicon glyphicon-wrench"></i>
-                            </div>
-                            <div class="col-xs-9 text-right">
-                                <h1>{{ $open_tickets_count }}</h1>
-                                <div>{{ trans('ticketit::admin.index-open-tickets') }}</div>
+            <div class="col-lg-2 col-md-4">
+                <a href="{{ url('tickets?status=1')}}">
+                    <div class="panel panel-danger">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3" style="font-size: 5em;">
+                                    <i class="glyphicon glyphicon-wrench"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <h1>{{ $open_tickets_count }}</h1>
+                                    <div>{{ trans('ticketit::admin.index-open-tickets') }}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
-            <div class="col-lg-3 col-md-4">
-                <div class="panel panel-success">
-                    <div class="panel-heading">
-                        <div class="row">
-                            <div class="col-xs-3" style="font-size: 5em;">
-                                <i class="glyphicon glyphicon-thumbs-up"></i>
+            <div class="col-lg-2 col-md-4">
+                <a href="{{ url('tickets?status=4')}}">
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3" style="font-size: 5em;">
+                                    <i class="glyphicon glyphicon-wrench"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <h1>{{ $pending_tickets_count }}</h1>
+                                    <div>Chamados Pendentes</div>
+                                </div>
                             </div>
-                            <div class="col-xs-9 text-right">
-                                <h1>{{ $closed_tickets_count }}</h1>
-                                <span>{{ trans('ticketit::admin.index-closed-tickets') }}</span>
+                        </div>
+                    </div>  
+                </a>
+            </div>
+            <div class="col-lg-2 col-md-4">
+                <a href="{{ url('tickets?status=3')}}">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3" style="font-size: 5em;">
+                                    <i class="glyphicon glyphicon-thumbs-up"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <h1>{{ $closed_tickets_count }}</h1>
+                                    <span>{{ trans('ticketit::admin.index-closed-tickets') }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-bar-chart-o fa-fw"></i> Funcionários do mês
+                    </div>
+                    <div class="panel-body">
+                        <div class="simple-wrapper" style="border-top: 1px solid #bbb;"">
+                            <div class="monthly-employee" style="border-left: 1px solid #bbb;">
+                                <div class="monthly-employee-header">
+                                    <i class="fa fa-heart fa-4 pull-left" style="padding-left: 20px;color: #c00;"></i>
+                                    <h4 class="monthly-employee-title">Beloved</h4>
+                                    <h5 class="monthly-employee-desc">Agente que recebeu melhor rating</h5>
+                                </div>
+                                <div class="clear"></div>
+                                @foreach($beloved_data as $key => $data)
+                                    <div class="monthly-employee-user">
+                                        <a href="{{ url('/profile') }}"><img class="avatar" src="{{ URL::asset('img/user') . '/' . ($data['agent']->avatar == null ? 'null.png' : $data['agent']->avatar) }}"></a>
+                                        <h4 class="monthly-employee-name">{{ $data['agent']->name }}</h4>
+                                        <h4 class="monthly-employee-rate">{{ substr($data['rate'], 0, 4) }}</h4>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <div class="monthly-employee">
+                                <div class="monthly-employee-header">
+                                    <i class="fa fa-bolt fa-4 pull-left" style="padding-left: 20px; color: #cc0;"></i>
+                                    <h4 class="monthly-employee-title">Speed Racer</h4>
+                                    <h5 class="monthly-employee-desc">Agente com melhor média de tempo</h5>
+                                </div>
+                                <div class="clear"></div>
+                                @foreach($speed_racer as $key => $data)
+                                    <div class="monthly-employee-user">
+                                        <a href="{{ url('/profile') }}"><img class="avatar" src="{{ URL::asset('img/user') . '/' . ($data['agent']->avatar == null ? 'null.png' : $data['agent']->avatar) }}"></a>
+                                        <h4 class="monthly-employee-name">{{ $data['agent']->name }}</h4>
+                                        <h4 class="monthly-employee-rate">{{ substr($data['time'], 0, 4) }}</h4>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <div class="monthly-employee">
+                                <div class="monthly-employee-header">
+                                    <i class="fa fa-coffee fa-4 pull-left" style="padding-left: 20px; color: #000;"></i>
+                                    <h4 class="monthly-employee-title">Produtivo</h4>
+                                    <h5 class="monthly-employee-desc">Agente com melhor score</h5>
+                                </div>
+                                <div class="clear"></div>
+                                @foreach($produtivo as $key => $data)
+                                    <div class="monthly-employee-user">
+                                        <a href="{{ url('/profile') }}"><img class="avatar" src="{{ URL::asset('img/user') . '/' . ($data['agent']->avatar == null ? 'null.png' : $data['agent']->avatar) }}"></a>
+                                        <h4 class="monthly-employee-name">{{ $data['agent']->name }}</h4>
+                                        <h4 class="monthly-employee-rate">{{ substr($data['score'], 0, 4) }}</h4>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <i class="fa fa-bar-chart-o fa-fw"></i> {{ trans('ticketit::admin.index-performance-indicator') }}
@@ -230,6 +310,7 @@
                 </div>
             </div>
         </div>
+    </div>
     @else
         <div class="well text-center">
             {{ trans('ticketit::admin.index-empty-records') }}

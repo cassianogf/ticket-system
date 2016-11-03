@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Kordy\Ticketit\Models\Category;
+use Kordy\Ticketit\Requests\PrepareCategoryRequest;
 
 class CategoriesController extends Controller
 {
@@ -38,13 +39,8 @@ class CategoriesController extends Controller
      *
      * @return Response
      */
-    public function store(Request $request)
+    public function store(PrepareCategoryRequest $request)
     {
-        $this->validate($request, [
-            'name'      => 'required',
-            'color'     => 'required',
-        ]);
-
         $category = new Category();
         $category->create(['name' => $request->name, 'color' => $request->color]);
 
@@ -85,15 +81,10 @@ class CategoriesController extends Controller
      * @param Request $request
      * @param int     $id
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(PrepareCategoryRequest $request, $id)
     {
-        $this->validate($request, [
-            'name'      => 'required',
-            'color'     => 'required',
-        ]);
-
         $category = Category::findOrFail($id);
         $category->update(['name' => $request->name, 'color' => $request->color]);
 

@@ -1,7 +1,5 @@
 <?php
 
 return [
-
-'data' => '<b>:name</b> changed the status of ":subject" from :old_status to :new_status<br>',
-
+    'data' => '<b>:name</b> alterado o status de ":subject" para :old_status para :new_status<br>',
 ];

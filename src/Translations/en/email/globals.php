@@ -1,11 +1,9 @@
 <?php
 
 return [
-
-    'assigned'    => 'Ticket Assigned',
-    'comment'     => 'New Comment',
-    'status'      => 'Status Changed',
-    'transfer'    => 'Ticket Transferred',
-    'view-ticket' => 'Click here to view your ticket.',
-
+    'assigned'    => 'Chamado Atribuido',
+    'comment'     => 'Novo Comentário',
+    'status'      => 'Status alterado',
+    'transfer'    => 'Chamado Transferido',
+    'view-ticket' => 'Click aqui pra ver seu chamado.',
 ];
