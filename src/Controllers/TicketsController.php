@@ -160,7 +160,8 @@ class TicketsController extends Controller
         $companies = \App\Http\Models\Company::all();
         $company = $request->input('company');
 
-        $data_tickets = Ticket::where('agent_id',0);
+        $data_tickets = Ticket::where('agent_id',0)
+            ->where('status_id', '!=', '3');
         $data_tickets = $data_tickets->paginate(6);
 
 
